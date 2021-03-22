@@ -36,7 +36,6 @@
 //! - executing a wasm substrate runtime inside of a wasm parachain
 
 #![warn(missing_docs)]
-#![cfg_attr(not(feature = "std"), no_std)]
 
 use std::vec::Vec;
 

@@ -636,7 +636,8 @@ define_env!(Env, <E: Ext>,
     // - If value length exceeds the configured maximum value length of a storage entry.
     // - Upon trying to set an empty storage entry (value length is 0).
     seal_set_storage(ctx, key_ptr: u32, value_ptr: u32, value_len: u32) => {
-        println!("seal_set_storage() called");
+        println!("Host function seal_set_storage() called");
+
         // ctx.charge_gas(RuntimeToken::SetStorage(value_len))?;
         if value_len > ctx.ext.max_value_size() {
             Err(ctx.store_err(Error::ValueTooLarge))?;
@@ -654,6 +655,8 @@ define_env!(Env, <E: Ext>,
     //
     // - `key_ptr`: pointer into the linear memory where the location to clear the value is placed.
     seal_clear_storage(ctx, key_ptr: u32) => {
+        println!("Host function seal_clear_storage() called");
+
         // ctx.charge_gas(RuntimeToken::ClearStorage)?;
         let mut key: StorageKey = [0; 32];
         ctx.read_sandbox_memory_into_buf(key_ptr, &mut key)?;
@@ -674,7 +677,8 @@ define_env!(Env, <E: Ext>,
     //
     // `ReturnCode::KeyNotFound`
     seal_get_storage(ctx, key_ptr: u32, out_ptr: u32, out_len_ptr: u32) -> ReturnCode => {
-        println!("seal_get_storage() called");
+        println!("Host function seal_get_storage() called");
+
         // ctx.charge_gas(RuntimeToken::GetStorageBase)?;
         let mut key: StorageKey = [0; 32];
         ctx.read_sandbox_memory_into_buf(key_ptr, &mut key)?;
@@ -717,6 +721,7 @@ define_env!(Env, <E: Ext>,
         // let result = ctx.ext.transfer(&callee, value);
         // ctx.map_dispatch_result(result)
 
+        println!("Unsupported host function seal_transfer() called");
         Ok(ReturnCode::NotSupported)
     },
 
@@ -801,6 +806,7 @@ define_env!(Env, <E: Ext>,
         // }
         // ctx.map_exec_result(call_outcome)
 
+        println!("Unsupported host function seal_call() called");
         Ok(ReturnCode::NotSupported)
     },
 
@@ -905,6 +911,7 @@ define_env!(Env, <E: Ext>,
         // }
         // ctx.map_exec_result(instantiate_outcome.map(|(_id, retval)| retval))
 
+        println!("Unsupported host function seal_instantiate() called");
         Ok(ReturnCode::NotSupported)
     },
 
@@ -936,11 +943,13 @@ define_env!(Env, <E: Ext>,
         // }
         // Err(sandbox::HostError)
 
+        println!("Unsupported host function seal_terminate() called");
         Ok(())
     },
 
     seal_input(ctx, buf_ptr: u32, buf_len_ptr: u32) => {
-        println!("seal_input() called");
+        println!("Host function seal_input() called");
+
         // ctx.charge_gas(RuntimeToken::InputBase)?;
         if let Some(input) = ctx.input_data.take() {
             ctx.write_sandbox_output(buf_ptr, buf_len_ptr, &input, false)
@@ -967,7 +976,8 @@ define_env!(Env, <E: Ext>,
     //
     // Using a reserved bit triggers a trap.
     seal_return(ctx, flags: u32, data_ptr: u32, data_len: u32) => {
-        println!("seal_return() called");
+        println!("Host function seal_return() called");
+
         // ctx.charge_gas(RuntimeToken::Return(data_len))?;
         ctx.trap_reason = Some(TrapReason::Return(ReturnData {
             flags,
@@ -996,6 +1006,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.caller().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_caller() called");
         Ok(())
     },
 
@@ -1011,6 +1022,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.address().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_address() called");
         Ok(())
     },
 
@@ -1033,6 +1045,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.get_weight_price(gas).encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_weight_to_fee() called");
         Ok(())
     },
 
@@ -1050,6 +1063,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.gas_meter.gas_left().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_gas_left() called");
         Ok(())
     },
 
@@ -1067,6 +1081,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.balance().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_balance() called");
         Ok(())
     },
 
@@ -1079,7 +1094,9 @@ define_env!(Env, <E: Ext>,
     //
     // The data is encoded as T::Balance.
     seal_value_transferred(ctx, out_ptr: u32, out_len_ptr: u32) => {
-        println!("seal_value_transferred() called");
+        println!("Host function seal_value_transferred() called");
+        println!("zero value is returned");
+
         // ctx.charge_gas(RuntimeToken::ValueTransferred)?;
         ctx.write_sandbox_output(
             out_ptr, out_len_ptr, &[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], false)
@@ -1103,6 +1120,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.random(&subject_buf).encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_random() called");
         Ok(())
     },
 
@@ -1118,6 +1136,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.now().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_now() called");
         Ok(())
     },
 
@@ -1130,6 +1149,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.minimum_balance().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_minimum_balance() called");
         Ok(())
     },
 
@@ -1154,6 +1174,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.tombstone_deposit().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_tombstone_deposit() called");
         Ok(())
     },
 
@@ -1231,6 +1252,7 @@ define_env!(Env, <E: Ext>,
         // }
         // Err(sandbox::HostError)
 
+        println!("Unsupported host function seal_restore_to() called");
         Ok(())
     },
 
@@ -1273,6 +1295,7 @@ define_env!(Env, <E: Ext>,
 
         // ctx.ext.deposit_event(topics, event_data);
 
+        println!("Unsupported host function seal_deposit_event() called");
         Ok(())
     },
 
@@ -1287,6 +1310,7 @@ define_env!(Env, <E: Ext>,
         //     ctx.read_sandbox_memory_as(value_ptr, value_len)?;
         // ctx.ext.set_rent_allowance(value);
 
+        println!("Unsupported host function seal_set_rent_allowance() called");
         Ok(())
     },
 
@@ -1304,6 +1328,7 @@ define_env!(Env, <E: Ext>,
         //     out_ptr, out_len_ptr, &ctx.ext.rent_allowance().encode(), false, already_charged
         // )
 
+        println!("Unsupported host function seal_rent_allowance() called");
         Ok(())
     },
 
@@ -1311,6 +1336,8 @@ define_env!(Env, <E: Ext>,
     // Only available on `--dev` chains.
     // This function may be removed at any time, superseded by a more general contract debugging feature.
     seal_println(ctx, str_ptr: u32, str_len: u32) => {
+        println!("Host function seal_println() called");
+
         let data = ctx.read_sandbox_memory(str_ptr, str_len)?;
         if let Ok(utf8) = core::str::from_utf8(&data) {
             println!("Contract print: {}", utf8);
@@ -1326,7 +1353,10 @@ define_env!(Env, <E: Ext>,
     // space at `out_ptr` is less than the size of the value a trap is triggered.
     seal_block_number(ctx, out_ptr: u32, out_len_ptr: u32) => {
         // ctx.charge_gas(RuntimeToken::BlockNumber)?;
-        ctx.write_sandbox_output(out_ptr, out_len_ptr, &2333.encode(), false)
+        // ctx.write_sandbox_output(out_ptr, out_len_ptr, &2333.encode(), false)
+
+        println!("Unsupported host function seal_block_number() called");
+        Ok(())
     },
 
     // Computes the SHA2 256-bit hash on the given input buffer.
@@ -1354,6 +1384,7 @@ define_env!(Env, <E: Ext>,
         // TODO: fix hash
         // ctx.compute_hash_on_intermediate_buffer(sha2_256, input_ptr, input_len, output_ptr)
 
+        println!("Unsupported host function seal_hash_sha2_256() called");
         Ok(())
     },
 
@@ -1382,6 +1413,7 @@ define_env!(Env, <E: Ext>,
         // TODO: fix hash
         // ctx.compute_hash_on_intermediate_buffer(keccak_256, input_ptr, input_len, output_ptr)
 
+        println!("Unsupported host function seal_hash_keccak_256() called");
         Ok(())
     },
 
@@ -1410,6 +1442,7 @@ define_env!(Env, <E: Ext>,
         // TODO: fix hash
         // ctx.compute_hash_on_intermediate_buffer(blake2_256, input_ptr, input_len, output_ptr)
 
+        println!("Unsupported host function seal_hash_blake2_256() called");
         Ok(())
     },
 
@@ -1438,6 +1471,7 @@ define_env!(Env, <E: Ext>,
         // TODO: fix hash
         // ctx.compute_hash_on_intermediate_buffer(blake2_128, input_ptr, input_len, output_ptr)
 
+        println!("Unsupported host function seal_hash_blake2_128() called");
         Ok(())
     },
 );
