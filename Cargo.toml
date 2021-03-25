@@ -10,10 +10,14 @@
 [workspace]
 members = [
     "primitives/core",
+    "primitives/debug-derive",
+    "primitives/externalities",
     "primitives/runtime-interface",
     "primitives/sandbox",
     "primitives/serializer",
     "primitives/std",
+    "primitives/storage",
+    "primitives/tracing",
     "primitives/wasm-interface",
     "utils/wasm-builder",
 ]
