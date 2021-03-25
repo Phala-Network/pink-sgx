@@ -27,13 +27,16 @@ use std::fmt;
 use std::collections::HashSet;
 
 use codec::{Encode, Decode};
-use sp_runtime::RuntimeString;
-pub use sp_runtime::create_runtime_str;
+// use sp_runtime::RuntimeString;
+// pub use sp_runtime::create_runtime_str;
 #[doc(hidden)]
 pub use sp_std;
 
-#[cfg(feature = "std")]
-use sp_runtime::{traits::Block as BlockT, generic::BlockId};
+mod runtime_string;
+pub use crate::runtime_string::*;
+
+// #[cfg(feature = "std")]
+// use sp_runtime::{traits::Block as BlockT, generic::BlockId};
 
 /// The identity of a particular API interface that the runtime might provide.
 pub type ApiId = [u8; 8];
@@ -52,7 +55,7 @@ macro_rules! create_apis_vec {
 /// This triplet have different semantics and mis-interpretation could cause problems.
 /// In particular: bug fixes should result in an increment of `spec_version` and possibly `authoring_version`,
 /// absolutely not `impl_version` since they change the semantics of the runtime.
-#[derive(Clone, PartialEq, Eq, Encode, Decode, Default, sp_runtime::RuntimeDebug)]
+#[derive(Clone, PartialEq, Eq, Encode, Decode, Default, sp_core::RuntimeDebug)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "std", serde(rename_all = "camelCase"))]
 pub struct RuntimeVersion {
@@ -180,26 +183,26 @@ impl NativeVersion {
 	}
 }
 
-/// Something that can provide the runtime version at a given block and the native runtime version.
-#[cfg(feature = "std")]
-pub trait GetRuntimeVersion<Block: BlockT> {
-	/// Returns the version of the native runtime.
-	fn native_version(&self) -> &NativeVersion;
+// /// Something that can provide the runtime version at a given block and the native runtime version.
+// #[cfg(feature = "std")]
+// pub trait GetRuntimeVersion<Block: BlockT> {
+// 	/// Returns the version of the native runtime.
+// 	fn native_version(&self) -> &NativeVersion;
 
-	/// Returns the version of runtime at the given block.
-	fn runtime_version(&self, at: &BlockId<Block>) -> Result<RuntimeVersion, String>;
-}
+// 	/// Returns the version of runtime at the given block.
+// 	fn runtime_version(&self, at: &BlockId<Block>) -> Result<RuntimeVersion, String>;
+// }
 
-#[cfg(feature = "std")]
-impl<T: GetRuntimeVersion<Block>, Block: BlockT> GetRuntimeVersion<Block> for std::sync::Arc<T> {
-	fn native_version(&self) -> &NativeVersion {
-		(&**self).native_version()
-	}
+// #[cfg(feature = "std")]
+// impl<T: GetRuntimeVersion<Block>, Block: BlockT> GetRuntimeVersion<Block> for std::sync::Arc<T> {
+// 	fn native_version(&self) -> &NativeVersion {
+// 		(&**self).native_version()
+// 	}
 
-	fn runtime_version(&self, at: &BlockId<Block>) -> Result<RuntimeVersion, String> {
-		(&**self).runtime_version(at)
-	}
-}
+// 	fn runtime_version(&self, at: &BlockId<Block>) -> Result<RuntimeVersion, String> {
+// 		(&**self).runtime_version(at)
+// 	}
+// }
 
 #[cfg(feature = "std")]
 mod apis_serialize {

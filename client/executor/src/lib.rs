@@ -31,21 +31,21 @@
 #![warn(missing_docs)]
 #![recursion_limit="128"]
 
-#[macro_use]
-mod native_executor;
-mod wasm_runtime;
+// #[macro_use]
+// mod native_executor;
+// mod wasm_runtime;
 #[cfg(test)]
 mod integration_tests;
 
 pub use wasmi;
-pub use native_executor::{with_externalities_safe, NativeExecutor, WasmExecutor, NativeExecutionDispatch};
+// pub use native_executor::{with_externalities_safe, NativeExecutor, WasmExecutor, NativeExecutionDispatch};
 pub use sp_version::{RuntimeVersion, NativeVersion};
 pub use codec::Codec;
 #[doc(hidden)]
 pub use sp_core::traits::{Externalities, CallInWasm};
 #[doc(hidden)]
 pub use sp_wasm_interface;
-pub use wasm_runtime::WasmExecutionMethod;
+// pub use wasm_runtime::WasmExecutionMethod;
 
 pub use sc_executor_common::{error, sandbox};
 
@@ -62,34 +62,34 @@ pub trait RuntimeInfo {
 	) -> error::Result<RuntimeVersion>;
 }
 
-#[cfg(test)]
-mod tests {
-	use super::*;
-	use sc_runtime_test::wasm_binary_unwrap;
-	use sp_io::TestExternalities;
-	use sp_wasm_interface::HostFunctions;
-	use sp_core::traits::CallInWasm;
+// #[cfg(test)]
+// mod tests {
+// 	use super::*;
+// 	use sc_runtime_test::wasm_binary_unwrap;
+// 	use sp_io::TestExternalities;
+// 	use sp_wasm_interface::HostFunctions;
+// 	use sp_core::traits::CallInWasm;
 
-	#[test]
-	fn call_in_interpreted_wasm_works() {
-		let mut ext = TestExternalities::default();
-		let mut ext = ext.ext();
+// 	#[test]
+// 	fn call_in_interpreted_wasm_works() {
+// 		let mut ext = TestExternalities::default();
+// 		let mut ext = ext.ext();
 
-		let executor = WasmExecutor::new(
-			WasmExecutionMethod::Interpreted,
-			Some(8),
-			sp_io::SubstrateHostFunctions::host_functions(),
-			8,
-			None,
-		);
-		let res = executor.call_in_wasm(
-			&wasm_binary_unwrap()[..],
-			None,
-			"test_empty_return",
-			&[],
-			&mut ext,
-			sp_core::traits::MissingHostFunctions::Allow,
-		).unwrap();
-		assert_eq!(res, vec![0u8; 0]);
-	}
-}
+// 		let executor = WasmExecutor::new(
+// 			WasmExecutionMethod::Interpreted,
+// 			Some(8),
+// 			sp_io::SubstrateHostFunctions::host_functions(),
+// 			8,
+// 			None,
+// 		);
+// 		let res = executor.call_in_wasm(
+// 			&wasm_binary_unwrap()[..],
+// 			None,
+// 			"test_empty_return",
+// 			&[],
+// 			&mut ext,
+// 			sp_core::traits::MissingHostFunctions::Allow,
+// 		).unwrap();
+// 		assert_eq!(res, vec![0u8; 0]);
+// 	}
+// }
